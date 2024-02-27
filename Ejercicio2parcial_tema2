@@ -1,0 +1,101 @@
+ACCION VENTA_ENTRADAS ES
+AMBIENTE
+
+cont_entrada, cont_ciudad: entero
+
+VENTAS = registro
+  clave = registro 
+    provincia: AN(20)
+    ciudad: AN(20)
+    plataforma: AN(20)
+    fecha: FECHA
+    entradas: N(5)
+  F_R
+F_R
+
+Arch: archivo de VENTAS ordenado por clave
+v: VENTAS
+
+SAL = registro
+  provincia: AN(20)
+  ciudad: AN(20)
+  entradas: AN(20)
+F_R
+
+Sal: archivo de SAL
+s: SAL
+
+FECHA = registro
+  d: 1..31
+  m: 1..12
+  a: N(4)
+F_R
+
+resg_ciudad: AN(20)
+resg_provincia: AN(20)
+resg_plataforma: AN(20)
+
+PROCEDIMIENTO TRATAR_REGISTRO() ES
+  SI resg.provincia <> v.clave.provincia ENTONCES
+    CORTE_PROVINCIA
+  SINO
+    SI resg_ciudad <> v.clave.ciudad ENTONCES
+      CORTE_CIUDAD
+    SINO
+      SI resg_plataforma <> v.clave.plataforma ENTONCES
+        CORTE_PLATAFORMA
+      F_S
+    F_S
+  F_S
+F_P
+
+
+PROCEDIMIENTO CORTE_PLATAFORMA() ES
+  ESC("La cantidad de entradas vendidas desde 01/06 hasta 01/07 en la plataforma:", resg_plataforma, "es de", cont_entrada)
+  cont_ciudad:= cont_ciudad + cont_entrada
+  cont_entrada:= 0
+  resg_plataforma:= v.clave.plataforma
+F_P
+
+PROCEDIMIENTO CORTE_CIUDAD() ES
+ CORTE_PLATAFORMA
+ SI cont_ciudad > 1000 ENTONCES
+   s.provincia:= resg.provincia
+   s.ciudad:= resg.ciudad
+   s.entradas:= cont_ciudad
+ F_S
+ ESC("La cantidad de entradas vendidas desde 01/06 hasta 01/07 en la ciudad de:", resg_ciudad, "es de", cont_ciudad)
+ cont_ciudad:= 0
+ resg_ciudad:= v.clave.ciudad
+F_P
+
+PROCEDIMIENTO CORTE_PROVINCIA() ES
+  CORTE_CIUDAD
+  resg.provincia:= v.clave.provincia
+F_P
+
+PROCESO
+  ABRIR E/(Arch)
+  ABRIR S/(SAL)
+  LEER(Arch, v)
+  resg.provincia:= v.clave.provincia
+  resg.ciudad:= v.clave.ciudad
+  resg.plataforma:= v.clave.plataforma
+  MIENTRAS NFDA(Arch) HACER
+    TRATAR_REGISTRO()
+    SI ((v.clave.fecha.m = 6) o (v.clave.fecha.m = 7 y v.clave.fecha.d = 1)) ENTONCES
+      cont_entradas:= cont_entradas + v.clave.entradas
+    F_S
+    LEER(Arch, v)
+  F_M
+  CERRAR(Arch)
+  CERRAR(SAL)
+FIN.
+
+
+  
+
+
+
+
+

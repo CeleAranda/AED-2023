@@ -1,0 +1,210 @@
+parcial_tema1
+
+ACCION ejercicio_parcial ES 
+	AMBIENTE 
+		sec_fila, sec_compra, sec_sal: secuencia de caracter;
+		v_fila, v_compra: caracter;
+		cont_ent: entero;
+		resg_pago: caracter;
+		resg_entrada: caracter;
+		cant_entrada: entero;
+		cont_us: entero;
+
+		FUNCION a_entero(a: caracter): entero
+			SEGUN a HACER
+				"0": a_entero:= 0;
+				"1": a_entero:= 1;
+				"2": a_entero:= 2;
+				"3": a_entero:= 3;
+				"4": a_entero:= 4;
+				"5": a_entero:= 5;
+				"6": a_entero:= 6;
+				"7": a_entero:= 7;
+				"8": a_entero:= 8;
+				"9": a_entero:= 9;
+			Fin_segun;
+		Fin_funcion;
+
+	PROCESO
+		ARR(sec_fila);
+		AVZ(sec_fila, v_fila);
+		ARR(sec_compra);
+		AVZ(sec_compra, v_compra);
+		CREAR(sec_sal);
+		cont_ent:=0;
+
+		MIENTRAS NFDS(sec_fila) HACER
+			MIENTRAS (v_fila <> "#") HACER
+				PARA i:= 1 a 4 HACER       //avanzo la hora
+					AVZ(sec_fila, v_fila);
+				Fin_para;
+
+				PARA i:= 1 a 6 HACER       //avanzo el numero de fila
+					AVZ(sec_fila, v_fila);
+				Fin_para;
+
+				resg_pago:= v_fila;       //resguardo el medio de pago
+				AVZ(sec_fila, v_fila);
+				cant_entrada:= a_entero(v_fila);   
+				resg_entrada:= cant_entrada;    //resguardo la cantidad de entradas
+			
+				SI (resg_pago = "T") ENTONCES
+					MIENTRAS (v_compra <> "?") HACER
+						PARA i:= 1 a 6 HACER   //avanzo el numero de fila
+							AVZ(sec_compra, v_compra);
+						Fin_para;
+
+						MIENTRAS (v_compra <> "+") HACER   
+							ESC(sec_sal, v_compra);   //guardo en sec_sal el nombre de usuario
+							AVZ(sec_compra, v_compra);
+						Fin_mientras;
+
+						ESC(sec_sal, "+");
+						AVZ(sec_compra, v_compra);
+
+						MIENTRAS (v_compra <> ".")
+							PARA j:= 1 a 7 HACER          //guardo en sec_sal el dni 
+								ESC(sec_sal, v_compra);
+								AVZ(sec_compra, v_compra);
+							Fin_para;
+
+							ESC(sec_sal, "+");
+							cont_ent:= cont_ent + 1;
+							AVZ(sec_compra, v_compra);
+
+							MIENTRAS (v_compra <> ".")
+								AVZ(sec_compra, v_compra);
+							Fin_mientras;
+						Fin_mientras;
+						ESC(sec_sal, "#");
+					Fin_mientras;
+				Fin_si;
+
+				SI(resg_entrada <> cont_ent) ENTONCES
+					cont_us:= cont_us + 1;
+				Fin_si;
+			Fin_mientras;
+			AVZ(sec_fila, v_fila);
+		Fin_mientras;
+
+		Escribir("El total de ususarios que comprarios una cantidad de entradas diferente a la que declararon en la fila virtual es de:", cont_us);
+		
+		CERRAR(sec_fila);
+		CERRAR(sec_compra);
+		CERRAR(sec_sal);
+
+Fin_accion.
+
+
+
+
+
+
+Ejercicio2 de parcial_tema1
+
+ACCION ejercicio_parcial ES
+	AMBIENTE
+		VENTAS = Registro
+			Provincia: AN(20);
+			Ciudad: AN(20);
+			Plataforma: AN(20);
+			Fecha: f_fecha;
+			Entradas: N(10);
+		Fin_registro;
+
+		Arch: archivo de VENTAS ordenado por provincia, ciudad, plataforma, fecha;
+		reg: VENTAS;
+
+		f_fecha = Registro
+			AA: 2023;
+			MM: (5..7);
+			DD: 1..31;
+		Fin_registro;
+
+		VENTAS_SALIDA = Registro
+			Provincia: AN(20);
+			Ciudad: AN(20);
+			Entradas: N(10);
+		Fin_registro;
+
+		Arch_sal: archivo de VENTAS ordenado por proviincia, ciudad, plataforma, fecha.
+		reg_sal: VENTAS_SALIDA;
+
+		tot_ventas; tot_prov; tot_cuidad; tot_plataf; tot_gen_ciud: entero;
+		resg_prov: AN(20); 
+		resg_cuid: AN(20); 
+		resg_plataf: AN(20);
+
+		PROCEDIMIENTO corte_plataf ES
+			Escribir("El total de ventas de la plataforma:", resg_plataf,"es:", tot_plataf);
+			tot_cuidad:= tot_cuidad + tot_plataf;
+			tot_plataf:= 0;
+			resg_plataf:= reg.Plataforma;
+		Fin_procedimiento;
+
+		PROCEDIMIENTO corte_ciud ES
+			corte_plataf();
+			Escribir("El total de ventas de la ciudad:", resg_ciud,"es:", tot_ciudad);
+			tot_prov:= tot_prov + tot_ciudad;
+
+				SI (tot_gen_ciud > 1000) ENTONCES
+					reg_sal.Provincia:= resg_prov;
+					reg_sal.Ciudad:= resg_ciud;
+					reg_sal.Entradas:= tot_gen_ciud;
+					ESC(Arch_sal, reg);
+				Fin_si;
+			
+			tot_ciudad:= 0;
+			tot_gen_ciud:= 0;
+			resg_ciud:= reg.Ciudad;
+		Fin_procedimiento;
+
+		PROCEDIMIENTO corte_prov ES
+			corte_ciud();
+			tot_ventas:= tot_ventas + tot_prov;
+			tot_prov:= 0;
+			resg_prov:= reg.Provincia;
+		Fin_procedimiento;		 	
+
+	PROCESO
+		ABRIR E/(Arch);
+		LEER(Arch, reg);
+		ABRIR S/(Arch_sal);
+
+		tot_ventas:= 0;
+		tot_prov:= 0;
+		tot_cuidad:= 0;
+		tot_plataf:= 0;
+		tot_gen_ciud:= 0;
+		resg_prov: reg.Provincia; 
+		resg_cuid: reg.Ciudad;
+		resg_plataf: reg.Plataforma;
+
+		MIENTRAS NFDA(Arch) HACER
+			SI (reg.Provincia <> resg_prov) ENTONCES
+				corte_prov;
+			SINO
+				SI (reg.Ciudad <> resg_ciud) ENTONCES
+					corte_ciud;
+				SINO
+					SI (reg.Plataforma <> resg_plataf) ENTONCES
+						corte_plataf;
+					Fin_si;
+				Fin_si;
+			Fin_si;
+			
+			SI (reg.Fecha.f_fecha.mes = 6) O (reg.Fecha.f_fecha.mes = 7 Y reg.Fecha.f_fecha.dia = 1) ENTONCES
+				tot_plataf:= tot_plataf + 1;
+			Fin_si;
+
+			tot_gen_ciud:= tot_gen_ciud + reg.Entradas;
+
+			LEER(Arch,reg);
+		Fin_mientras;
+
+		corte_prov;
+		Escribir("El total general de ventas es de:", tot_ventas);
+		CERRAR(Arch);
+		CERRAR(Arch_sal);
+
+Fin_accion.

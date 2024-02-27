@@ -1,0 +1,23 @@
+Imprimir las cifras de un número n(siendon≥0) en orden 
+inverso al original. Por ej.: el inverso de 254 es 452.
+
+//n = 254
+procedimiento inverso(n:entero) es
+    SI (n<10) ENTONCES
+        Escribir(n);
+    SINO
+        Escribir ((n MOD 10))  //4   
+        inverso(n DIV 10) //25
+    fs
+fp
+
+//n=25
+
+x:=1
+funcion inverso(n:entero): entero es
+    SI (n<10) ENTONCES 
+        inverso:= n * x;
+    SINO
+        x:= x * 10  
+        inverso:= (n MOD 10) * x + inverso(n DIV 10)      //(n MOD 10) = 5 x=10
+

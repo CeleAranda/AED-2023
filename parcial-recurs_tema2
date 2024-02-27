@@ -1,0 +1,302 @@
+parcial-recurs_tema2
+
+ACCION ejercicio1 ES
+	AMBIENTE
+		sec_art, sec_vent, sec_sal: secuencia de caracter;
+		v_art, v_vent: caracter;
+		resg_FP, resg_FE: caracter;
+		FE_us: caracter
+		num1, num2, UV: entero
+		cont_T, cont_C: entero
+
+		FUNCION a_entero(a:caracter): entero ES
+			SEGUN a HACER
+				"0": a_entero:= 0;
+				"1": a_entero:= 1;
+				"2": a_entero:= 2;
+				"3": a_entero:= 3;
+				"4": a_entero:= 4;
+				"5": a_entero:= 5;
+				"6": a_entero:= 6;
+				"7": a_entero:= 7;
+				"8": a_entero:= 8;
+				"9": a_entero:= 9;
+			Fin_segun;
+		Fin_funcion;
+
+		FUNCION numero(a,b: entero): entero ES
+			decena:= a * 10;
+			unidad:= b;
+			numero:= decena + unidad;
+		Fin_funcion;
+
+	PROCESO
+		ARR(sec_art);
+		AVZ(sec_art, v_art);
+		ARR(sec_vent);
+		AVZ(sec_vent, v_vent);
+		CREAR(sec_sal);
+
+		cont_T:= 0;
+		cont_S:= 0;
+		UV:= 0;
+
+		MIENTRAS NFDS(sec_vent) HACER
+			MIENTRAS (v_vent <> "#") HACER	
+				PARA i:=1 a 4 HACER
+					AVZ(sec_vent, v_vent);
+				Fin_para;
+
+				resg_FP:= v_vent;
+				AVZ(sec_vent, v_vent);
+				resg_FE:= v_vent;
+				AVZ(sec_vent, v_vent);
+
+				num1: a_entero(v_vent);
+				AVZ(sec_vent, v_vent);
+				num2: a_entero(v_vent);
+				UV:= numero(num1, num2);
+
+				PARA i:=1 a 9 HACER
+					AVZ(sec_art, v_art);
+				Fin_para;
+
+				MIENTRAS (v_art <> "&") HACER
+					SEGUN resg_FP HACER
+						"T": cont_T:= cont_T + UV;
+						"C": cont_C:= cont_C + UV;
+					Fin_segun;
+
+					SI (FE_us = resg_FE) ENTONCES
+						Escribir("|Nombre artículo|          |Cant. unid vendidas con tarjeta|          |Cant. unid vendidas al contado");
+						Escribir(v_art, "  ", cont_T, "  ", cont_C);
+					SINO
+						SI (con_T > cont_C) ENTONCES
+							ESC(sec_sal, v_art);
+							AVZ(sec_art, v_art);	
+					Fin_si;
+					AVZ(sec_art, v_art);
+				Fin_mientras;
+			AVZ(sec_vent, v_vent);
+			Fin_mientras
+		AVZ(sec_vent, v_vent);
+		Fin_mientras;
+
+		CERRAR(sec_art);
+		CERRAR(sec_vent);
+		CERRAR(sec_vent);
+Fin_accion,
+
+
+
+
+
+
+
+
+
+
+
+
+
+ACCION ejercicio1_pt2 ES
+	AMBIENTE
+		sec_art, sec_vent, sec_sal: secuencia de caracter;
+		v_art, v_vent: caracter;
+		FE_us, resg_FE, resg_FP: caracter;
+		num1, num2, UV: entero;
+		cont_T, cont_C, cont_unidT, cont_unidC: entero:
+
+		FUNCION a_entero(v: caracter): entero ES
+			SEGUN v HACER
+				"0": a_entero:= 0;
+				"1": a_entero:= 1;
+				"2": a_entero:= 2;
+				"3": a_entero:= 3;
+				"4": a_entero:= 4;
+				"5": a_entero:= 5;
+				"6": a_entero:= 6;
+				"7": a_entero:= 7;
+				"8": a_entero:= 8;
+				"9": a_entero:= 9;
+			Fin_segun;
+		Fin_funcion;
+
+		FUNCION numero(a, b: entero): entero ES
+			decena:= a*10;
+			unidad:= b;
+			numero:= decena + unidad;
+		Fin_funcion;
+
+	PROCESO
+		ARR(sec_art);
+		AVZ(sec_art, v_art);
+		ARR(sec_vent);
+		AVZ(sec_vent, v_vent);
+		CREAR(sec_sal);
+
+		Escribir("Ingrese un mes, con el siguiente formato: MM, para verificar las ventas: ");
+		Leer(FE_us);
+
+		Escribir("|Nombre del Artículo|        |Cant. unidades vendidas con tarjeta|        |Cant. unidades vendidas al contado|");
+
+		MIENTRAS NFDS(sec_art) HACER
+			PARA i:= 1 a 9 HACER
+				AVZ(sec_art, v_art);   //avanzo hasta el nombre del articulo
+			Fin_para;
+
+			cont_T:= 0;
+			cont_C:= 0;
+			cont_unidT:= 0;
+			cont_unidC:= 0;
+
+			MIENTRAS (v_vent <> "#") HACER
+				Para i:= 1 a 4 HACER
+					AVZ(sec_vent, v_vent);
+				Fin_para;
+
+				resg_FP:= v_vent;
+				AVZ(sec_vent, v_vent);
+				resg_FE:= v_vent;
+				AVZ(sec_vent, v_vent);
+
+				num1:= a_entero(v_vent);
+				AVZ(sec_vent, v_vent);
+				num2:= a_entero(v_vent);
+				UV:= numero(num1, num2);
+				AVZ(sec_vent, v_vent);
+
+				SI (resg_FE = FE_us) ENTONCES
+					SI (resg_FP = "T") ENTONCES
+						cont_T:= cont_T + 1;    //cuento las cantidades de ventas con tarjeta
+						cont_unidT:= cont_unidT + UV;      //acumulo las unidades vendidas
+					SINO
+						SI (resg_FP = "C") ENTONCES
+							cont_C:= cont_C + 1;   //cuento las cantidades de ventas al contado
+							cont_unidC:= cont_unidC + UV;  //acumulo las unidades vendidas 
+						Fin_si;
+					Fin_si;
+				SINO
+					SI (resg_FP = "T") ENTONCES
+						cont_T:= cont_T + 1;
+					SINO
+						SI (resg_FP = "C") ENTONCES
+							cont_C:= cont_C + 1;
+						Fin_si;
+					Fin_si;
+				Fin_si;
+
+				MIENTRAS (v_art <> "&") HACER
+					SI (cont_T > cont_C) ENTONCES
+						ESC(sec_sal, v_art);
+					Fin_si;
+					AVZ(sec_art, v_art);
+				Fin_mientras;
+
+				AVZ(sec_art, v_art);
+				ESC(cont_unidT);
+				ESC(cont_unidC);
+			Fin_mientras;
+		Fin_mientras;
+
+		CERRAR(sec_art);
+		CERRAR(sec_vent);
+		CERRAR(sec_sal);
+Fin_accion;
+
+
+
+
+ACCION ejercicio2 ES
+	AMBIENTE
+		STOCK = Registro
+			cod_suc: N(2);
+			rubro: AN(20);
+			cod_art: N(5);
+			fechaUltRep: f_fecha;
+			stock_seg: N(4);
+			stock: N(4);
+		Fin_registro;
+		Arch: archivo de STOCK ordenado por cod_suc, rubro y cod_art;
+		reg: STOCK;
+
+		f_fecha = Registro
+			año: N(4);
+			mes: (1..12);
+			dia: (1..31);
+		Fin_registro;
+
+		fecha_us = Registro
+			año: N(4);
+			mes: (1..12);
+			dia: (1..31);
+		Fin_registro;
+		reg_f: fecha_us;
+
+		STOCK_SAL = Registro
+			cod_su: N(2);
+			cod_art: N(5);
+		Fin_registro;
+		Arch_sal: archivo de STOCK_SAL;
+		reg_sal: STOCK_SAL;
+
+		tot_gen, tot_suc, tot_rubro: entero;
+		resg_suc: N(2);
+		resg_rubro: AN(20);
+
+		PROCEDIMIENTO corte_rubro() ES
+			Escribir("El total de artículos del rubro:", resg_rubro, "cuya fecha de última reposición es anterior a la fecha ingresada es de:", tot_rubro);
+			tot_suc:= tot_suc + tot_rubro;
+			tot_rubro:= 0;
+			resg_rubro:= reg.rubro;
+		Fin_procedimiento;
+
+		PROCEDIMIENTO corte_suc() ES
+			corte_rubro();
+			Escribir("El total de artículos de la sucursal:", resg_suc, "cuya fecha de última reposición es anterior a la fecha ingresada es de:", tot_suc");
+			tot_gen:= tot_gen + tot_suc;
+			tot_suc:= 0;
+			resg_suc:= reg.suc;
+		Fin_procedimiento;
+
+	PROCESO
+		ABRIR E/(Arch);
+		LEER(Arch, reg);
+		ABRIR S/(Arch_sal);
+
+		tot_gen:= 0;
+		tot_suc:= 0;
+		tot_rubro:= 0; 
+		resg_suc: reg.cod_suc;
+		resg_rubro: reg.rubro;
+
+		Escribir("Ingrese una fecha a verificar, con el siguiente formato: AAAA, MM, DD.");
+		Leer(reg_f.año, reg_f.mes, reg_f.dia);
+
+		MIENTRAS NDFA(Arch) HACER
+			SI (resg_suc <> reg.cod_suc) ENTONCES
+				corte_suc;
+			SINO
+				SI (resg_rubro <> reg.rubro) ENTONCES
+					corte_rubro();
+				Fin_si;
+			Fin_si;
+
+			SI (reg.fechaUltRep.f_fecha < fecha_us) ENTONCES
+				tot_rubro:= tot_rubro + 1;
+
+				SI (reg.rubro = "BAZAR") ENTONCES
+					reg_sal.cod_suc:= reg.cod_suc;
+					reg_sal.cod_art:= reg.cod_art;
+					GRABAR(Arch_sal, reg);
+				Fin_si;
+			Fin_si;
+			LEER(Arch, reg);
+		Fin_mientras
+
+		corte_suc():
+		Escribir("El total general de articulos que presentan fecha de última reposición anterior a la fecha ingresada es de:", tot_gen);
+
+		CERRAR(Arch);
+		CERRAR(Arch_sal);
+Fin_accion.

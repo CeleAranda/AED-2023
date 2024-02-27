@@ -1,0 +1,189 @@
+Ejercicio1 de parcial_tema2
+
+ACCION ejercicio_parcial ES 
+	AMBIENTE 
+		sec_fila, sec_compra, sec_sal: secuenca de caracter;
+		v_fila, v_compra: caracter;
+		cant_us: entero;
+		ent1, ent2, ent3, ent4, horas, mimutos: entero;
+
+		FUNCION entero(a: caracter): entero
+			SEGUN a HACER
+				"0": a_entero:= 0;
+				"1": a_entero:= 1;
+				"2": a_entero:= 2;
+				"3": a_entero:= 3;
+				"4": a_entero:= 4;
+				"5": a_entero:= 5;
+				"6": a_entero:= 6;
+				"7": a_entero:= 7;
+				"8": a_entero:= 8;
+				"9": a_entero:= 9;
+			Fin_segun;
+		Fin_funcion;
+
+		FUNCION a_hora(a,b: entero): entero
+			num1:= a * 10;
+			num2:= b;
+			hora:= num1 + num2;
+		Fin_funcion;
+
+		FUNCION a_minuto(c,d: entero): entero
+			num3:= c * 10;
+			num4:= d;
+			hora:= num3 + num4;
+		Fin_funcion;
+
+	PROCESO
+		ARR(sec_fila);
+		AVZ(sec_fila, v_fila);
+		ARR(sec_compra);
+		AVZ(sec_compra, v_compra);
+		CREAR(sec_sal);
+
+		cant_us:= 0;
+
+		MIENTRAS NFDS(sec_fila) HACER
+			ent1:= a_entero(v_fila);
+			AVZ(sec_fila, v_fila);
+			ent2:= a_entero(v_fila);
+			AVZ(sec_fila, v_fila);
+
+			horas:= a_hora(ent1, ent2);
+
+			ent3:= a_entero(v_fila);
+			AVZ(sec_fila, v_fila);
+			ent4:= a_entero(v_fila);
+			AVZ(sec_fila, v_fila);
+
+			minutos:= a_minuto(ent3, ent4);
+
+			SI (horas < 10 Y minutos < 59) ENTONCES
+				MIENTRAS (v_compra <> "?") HACER    //"?" indica el fin de una compra
+					PARA i:= 1 a 6 HACER
+						ESC(sec_sal, v_compra);
+						AVZ(sec_compra, v_compra);
+					Fin_para;
+
+					ESC(sec_sal, "+");
+
+					SI (v_compra = "#") ENTONCES
+						AVZ(sec_compra, v_compra);
+						SI (v_compra = "+") ENTONCES
+							AVZ(sec_compra, v_compra);
+							SI (v_compra = "?") ENTONCES
+								cont_us:= cont_us + 1;
+							Fin_si;
+						Fin_si;
+					Fin_si;
+
+					MIENTRAS (v_compra <> "+") HACER
+						AVZ(sec_compra, v_compra);
+					Fin_mientras;
+
+					MIENTRAS (v_compra <> ".") HACER
+						PARA i:= 1 a 7 HACER
+							ESC(sec_sal, v_compra);
+							AVZ(sec_compra, v_compra);
+						Fin_para;	
+						
+						ESC(sec_sal, "+");
+
+						MIENTRAS (v_compra <> ".") HACER
+							AVZ(sec_compra, v_compra);
+						Fin_mientras;
+					Fin_mientras;
+
+				ESC(sec_sal, "#");
+				Fin_mientras;
+			Fin_si;	
+			AVZ(sec_fila, v_fila);
+		Fin_mientras;
+
+		Escribir("La cantidad de usuarios que abandonaron la fila es de:", cont_us);
+
+		CERRAR(sec_fila);
+		CERRAR(sec_compra);
+		CERRAR(sec_sal);
+Fin_accion.
+
+
+
+
+
+Ejercicio2 de parcial_tema2
+
+ACCION ejercicio_parcial ES
+	AMBIENTE
+		VENTAS = Registro
+			provincia: AN(30);
+			ciudad: AN(30);
+			plataforma: AN(5);
+			fecha: f_fecha;
+			entradas: N(9);
+		Fin_registro;
+
+		Arch: archivo de VENTAS ordenado por provincia, ciudad, plataforma y fecha;
+		reg: VENTAS;
+
+		f_fecha = Registro
+			año: 2023;
+			mes: (5..7);
+			dia: (1..31);
+		Fin_registro;
+
+		VENTAS_JUNIO = Registro
+			provincia: AN(30);
+			entradas: N(9);
+		Fin_registro;
+
+		Arch_sal: archivo de VENTAS_JUNIO;
+		reg_sal: VENTAS_JUNIO;
+
+		PROCEDIMIENTO corte_ciud() ES
+			Escribir("La ciudad:", resg_ciudad, "de la provincia:", resg_prov, "presenta más de 7500 entradas.");
+			tot_prov:= tot_prov + tot_ciud;
+			tot_ciud:= 0;
+			resg_ciud:= reg.ciudad;
+			tot_gen_ciud:= tot_gen_ciud + reg.entradas;
+		Fin_procedimiento;
+
+		PROCEDIMIENTO corte_prov() ES
+			corte_ciud;
+			tot_prov:= 0;
+			resg_prov:= reg.provincia;
+		Fin_procedimiento;
+
+	PROCESO
+		ABRIR E/(Arch);
+		LEER(Arch, reg);
+		ABRIR S/(Arch_sal);
+
+		//resguardos y totalizadores 
+
+		MIENTRAS NFDA(Arch) HACER
+			SI (resg_prov <> reg.provincia) ENTONCES
+				corte_prov();
+			SINO 
+				SI (resg_ciud <> reg.ciud) ENTONCES
+					corte_ciud;
+				Fin_si;
+			Fin_si;
+
+			SI (tot_gen_ciud > 7500) ENTONCES
+				tot_ciud:= tot_ciud + 1;
+			Fin_si; 
+
+			SI (reg.fecha.f_fecha.mes = "6") ENTONCES 
+				reg_sal.provincia:= resg.provincia;
+				reg_sal.entradas:= tot_ciud;
+				ESC(Arch_sal, reg);
+			Fin_si;
+		Fin_mientras;
+
+
+
+
+
+			
+

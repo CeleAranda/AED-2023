@@ -1,0 +1,44 @@
+Ejercicio 2.2.1
+
+ACCION ejercicio_221 ES
+	AMBIENTE
+		sec, sec_sal: secuencia de caracter;
+		v: caracter;
+		IMPAR: {"1", "3", "5", "7", "9"};
+		PAR: {"2", "4", "6", "8"};
+		tot_par, tot_impar, tot_num: entero;
+
+	PROCESO
+		ARR(sec);
+		AVZ(sec, v);
+		CREAR(sec_sal);
+
+		tot_par:= 0;
+		tot_impar:= 0;
+		tot_num:= 0;
+
+		MIENTRAS NFDS(sec) HACER
+			SI (v en IMPAR) ENTONCES
+				ESC(sec_sal, v);
+				tot_par:= tot_par + 1;
+			SINO 
+				SI (v en DIGITO) ENTONCES
+					tot_impar:= tot_impar + 1;
+				Fin_si;
+			Fin_si;
+
+			tot_num:= tot_par + tot_ impar;
+
+		Fin_mientras;
+
+		Escribir("La cantidad de números impares es:", tot_impar);
+
+		Escribir("La cantidad de números pares es:", tot_par);
+
+		Escribir("El total de números es:", tot_num);
+
+		Escribir("El porcentaje de números pares es:", tot_par/tot_num);
+
+		Escribir("El porcentaje de números impares es:", tot_impar/tot_num);
+
+Fin_accion.

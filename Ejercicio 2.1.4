@@ -1,0 +1,62 @@
+Ejercicio 2.1.4
+
+ACCION ejercicio_214 ES
+	AMBIENTE
+		sec_car, sec_num, sec_sal: secuencia de caracter;
+		v_car, v_num: caracter;
+
+	PROCESO
+		ARR(sec_car);
+		AVZ(sec_car, v_car);
+		ARR(sec_num);
+		AVZ(sec_num, v_num);
+		CREAR(sec_sal);
+
+		MIENTRAS NFDS(sec_car) Y NFDS(sec_num) HACER
+			ESC(sec_sal, v_car);
+			AVZ(sec_car, v_car);
+			ESC(sec_sal, v_num);
+			AVZ(sec_num, v_num);
+		Fin_mientras;
+
+		CERRAR(sec_car);
+		CERRAR(sec_num);
+
+Fin_accion.
+
+
+
+ACCION ejercicio_214 ES
+	AMBIENTE
+		sec_car, sec_num, sec_sal: secuencia de caracter;
+		v_car, v_num: caracter;
+		tot_car, tot_num: entero;
+
+	PROCESO
+		ARR(sec_car);
+		AVZ(sec_car, v_car);
+		ARR(sec_num);
+		AVZ(sec_num, v_num);
+		CREAR(sec_sal);
+
+		tot_car:= 0:
+		tot_num:= 0;
+
+		MIENTRAS NFDS(sec_car) Y NFDS(sec_num) HACER
+			ESC(sec_sal, v_car);
+			tot_car:= tot_car + 1;
+			AVZ(sec_car, v_car);
+			
+			ESC(sec_sal, v_num);
+			tot_num:= tot_num + 1;
+			AVZ(sec_num, v_num);
+		
+		Fin_mientras;
+
+		CERRAR(sec_car);
+		CERRAR(sec_num);
+
+		Escribir("el total de caracteres es:", tot_car);
+		Escribir("el total de caracteres numéricos es:", tot_num);
+
+Fin_accion.

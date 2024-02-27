@@ -1,0 +1,99 @@
+Clase 02/09
+
+archivo indexado, definicion:
+
+DATO = Registro 
+	CLAVE: ...;
+	campo1: ...;
+	...
+	campon: ...;
+fin_registro;
+
+Arch: archivo de DATOS indexados por etc..
+
+ABRIR E/(Arch) obtener info
+ABRIR S/(Arch) guardar info
+ABRIR E/S(Arch) modificar info
+
+acceder a registros:
+Reg.clave:= valor_buscado
+LEER(Arch, reg);   //avanzar
+
+//puede que no exista el registro entero, entonces:
+SI EXISTE ENTONCES
+	(acciones de busqueda);
+SINO
+	(acciones por busqueda fallida);
+Fin_si
+
+acciones a registros:
+ESC(Arch, reg)   //grabar 
+REESCRIBIR(Arch, reg)  //cuando el registro existe y hay que modificarlo 
+ELIMINAR(Arch, reg)    //eliminar el registro
+
+
+
+ACCION ejercicio2.3.3 ES
+	AMBIENTE
+		PEAJE = Registro
+			patente: XXX-NNN;
+			fecha: f_fecha;
+			ult_hora: N(4);
+			costo: XXX,XX;
+		Fin_registro;
+
+		f_fecha = Registro
+			año: N(4);
+			mes: (1..12);
+			dia: (1..31);
+		Fin_registro;
+
+		Arch: archivo de PEAJE indexado por patente y fecha;
+		reg: PEAJE;
+
+		patente, categ: alfanumerico;
+		costo: entero;
+
+		rta: ("si", "no");
+
+	PROCESO
+		ABRIR E/(Arch);
+		LEER(Arch, reg);
+
+		Escribir("Ingrese la patente y su categoría: ");
+		Leer(patente, categ);
+
+		MIENTRAS (rta = "si") HACER
+				reg.patente:= patente;
+				reg.fecha:= obtener_fecha_sist();
+				LEER(Arch, reg);
+
+				SI EXISTE ENTONCES
+					Escribir("Ud. anteriormente ha pasado, tiene el pase libre");
+					reg.ult_hora:= ult_hora();
+					GRABAR(Arch, reg);		
+				SINO
+					Escribir("Ingrese la patente y su respectiva categoria:");
+					Leer(patente, categ);
+
+					SEGUN categ HACER
+						"1": costo:= 1,20;
+						"2": costo:= 2,50;
+						"3": costo:= 4,00;
+						"4": costo:= 5,00;
+					Fin_segun;
+
+					Escribir("El costo es de:", costo);
+					reg.ult_hora:= ult_hora();
+					reg.costo:= costo;
+					GRABAR(Arch, reg);
+				Fin_si;
+				Escribir("¿Próximo costo? Ingrese "si" o "no"");
+				Leer(rta);
+		Fin_mienttras;
+
+
+2.2.19
+mae cuentas y usuarios
+//el archivo indexado es la estructura de datos
+//al erreglo es una estructura de datos estatica yq eu se coloca la longitud que presenta y no se puede modificar

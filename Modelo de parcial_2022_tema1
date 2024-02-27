@@ -1,0 +1,169 @@
+Modelo de parcial_2022_tema1
+
+ACCION ejercicio1 ES
+	AMBIENTE
+		sec; sec_sal: secuencia de caracter;
+		v: caracter;
+		reserva_us, reserva_es: caracter;
+		num1, num2, capacidad, tot_reserva: entero;
+
+		FUNCION a_entero(a:caracter):entero 
+			SEGUN a HACER
+				"0": a_entero:= 0;
+				"1": a_entero:= 1;
+				"2": a_entero:= 2;
+				"3": a_entero:= 3;
+				"4": a_entero:= 4;
+				"5": a_entero:= 5;
+				"6": a_entero:= 6;
+				"7": a_entero:= 7;
+				"8": a_entero:= 8;
+				"9": a_entero:= 9;
+			Fin_segun;
+		Fin_funcion.
+
+		FUNCION numero(a,b:entero):entero 
+			decena:= a*10;
+			unidad:= b;
+			numero:= (decena + unidad) * 1000;
+		Fin_funcion.
+
+
+	PROCESO
+		ARR(sec);
+		AVZ(sec, v);
+		CREAR(sec_sal);
+
+		tot_reserva:= 0;
+
+		Escribir("Ingrese un tipo de reserva: ");
+		Leer(reserva_us);
+
+		MIENTRAS NFDS(sec) HACER
+			MIENTRAS(v <> "%") HACER   //guardo el nombre de los estadios en la secuencia de salida
+				ESC(sec_sal, v);
+				AVZ(sec, v);
+			Fin_mientras;
+			ESC(sec_sal, "%");
+
+			AVZ(sec, v);   //avanzo el caracter "%"
+
+			num1:= a_entero(v);
+			AVZ(sec, v);
+			num2:= a_entero(v);
+			capacidad:= numero(num1, num2);   //capacidad (en miles) de un estadio
+
+			AVZ(sec, v);   //avanzo el caracter "#"
+			reserva_es:= v;  //resguardo el tipo de reserva 
+			AVZ(sec, v);
+
+			MIENTRAS(v <> "%") HACER
+				AVZ(sec, v);
+			Fin_mientras;
+
+			AVZ(sec, v);     //avanzo el caracter "%"
+
+			SI (reserva_us = reserva_es) ENTONCES
+				PARA i:=1 a 3 HACER
+					ESC(sec_sal; v);
+				Fin_para;
+			Fin_si;
+			ESC(sec_sal, "@");
+
+			Fin_mientras;
+			tot_reserva:= tot_reserva + 1;
+		
+		Fin_mientras;
+
+		Escribir("El total de reserva del estadio es de:", tot_reserva);
+		Escribir("El porcentaje de ocupación del estadio es de:", (tot_reserva/capacidad) * 100);
+
+		CERRAR(sec);
+		CERRAR(sec_sal);
+Fin_accion.
+
+
+
+
+ACCION ejercicio2 ES
+	AMBIENTE
+		HOTELES = Registro
+			cod_cad: AN(15);
+			nivel_h: (1..5);
+			cod_h: N(4);
+			nomb_h: AN(50);
+			es_ciudad_sede: Booleano;
+			cant_habit: N(4);
+		Fin_registro;
+
+		Arch: archivo de HOTELES ordenado por cos_cad y nivel_h;
+		reg: HOTELES;
+
+		HOTELES_SAL = Registro
+			cod_cad: AN(15);
+			cant_habit: N(4);
+		Fin_registro;
+
+		Arch_sal: archivo de HOTELES_SAL;
+		reg_sal: HOTELES_SAL;
+
+		tot_gen, tot_cad, tot_nivel: entero; 
+		resg_cad: AN(15);
+		resg_nivel: (1..5);
+
+		PROCEDIMIENTO corte_nivel() 
+			Escribir("La cantidad de habitaciones del nivel de hotel:", resg_nivel, "es de:", tot_nivel);
+			tot_cad:= tot_cad + tot_nivel;
+			tot_nivel:= 0;
+			resg_nivel:= reg.nivel_h;
+		Fin_procedimiento;
+
+		PROCEDIMIENTO corte_cadena()
+			corte_nivel(); 
+			Escribir("La cantidad de habitaciones de la cadena de hotel:", resg_cad, "es de:", tot_cad);
+
+				reg_sal:= resg_cad;
+				reg_sal:= tot_cad; 
+				ESC(Arch_sal, reg);
+				
+			tot_gen:= tot_gen + tot_cad;
+			tot_cad:= 0;
+			resg_cad:= reg.cod_cad;
+		Fin_procedimiento;
+
+
+	PROCESO
+		ABRIR E/(Arch);
+		LEER(Arch, reg);
+		ABRIR S/(Arch_sal);
+
+		tot_gen:= 0;
+		tot_cad:= 0;
+		tot_nivel:= 0;	
+
+		resg_cad: reg.cod_cad;
+		resg_nivel: reg.nivel_h;
+
+		MIENTRAS NFDA(Arch) HACER
+			SI (resg_cad <> reg.cod_cad) ENTONCES
+				corte_cadena();
+			SINO 
+				SI (resg_nivel <> reg.nivel_h) ENTONCES
+					corte_nivel();
+				Fin_si;
+			Fin_si;
+
+			SI (reg.es_ciudad_sede = "VERDADERO") ENTONCES
+				tot_nivel:= tot_nivel + reg.cant_habit;
+			Fin_si;
+
+			LEER(Arch, reg);
+
+		Fin_mientras;
+		corte_cadena();
+		Escribir("El total general de habitaciones de hoteles que se encuentran en ciudades sedes es de:", tot_gen);
+
+		CERRAR(Arch);
+		CERRAR(Arch_sal);
+
+Fin_accion.
