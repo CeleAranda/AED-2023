@@ -1,14 +1,15 @@
 Modelo de parcial_2016_tema1
 
-ANombreEscultoraaaaaaaaaaaaaaaa2018|ENombreEscultoraaaaaaaaaaaaaaaa201e|ENombreEscultoraaaaaaaaaaaaaaaa201a|FNombreEscultoraaaaaaaaaaaaaaaa2010|etc|FDS
+continente(1car) NombreEscultor(30car) añoInicio(4car) |...|FDS
+A NombreEscultoraaaaaaaaaaaaaaaa 2018|E NombreEscultoraaaaaaaaaaaaaaaa 201e|E NombreEscultoraaaaaaaaaaaaaaaa 201a|F NombreEscultoraaaaaaaaaaaaaaaa 2010|etc|FDS
 
 ACCION ejercicio1_parcial ES
 	AMBIENTE
-		sec, sec_a, sec_e, sec_f: secuencia de caracter;
+		sec, sec_a, sec_e, sec_f: secuencia de caracter; //sec_a:america, sec_e:euroma, sec_f:africa
 		v: caracter;
 		resg_cont: caracter    //resguarda el continente
 
-		tot_a, tot_e, tot_f, total_escultor: entero;    //totales de escultores por continente
+		tot_a, tot_e, tot_f, tot_escultor: entero;    //totales de escultores por continente y total gral
 		tot_error: entero;      //total de escultores con info errónea 
 		tot_a2000, tot_e2000, tot_i2000 : entero;   //total de escultores por continente que comenzaron después del 2000
 
@@ -38,7 +39,7 @@ ACCION ejercicio1_parcial ES
 			numero:= unid_mil + centena + decena + unidad;
 		Fin_funcion.
 
-		FUNCION convertir(x: caracter): entero 
+		FUNCION convertir(x: caracter): entero
 			SEGUN x HACER
 				"a": convertir:= 1;
 				"e": convertir:= 2;
@@ -60,15 +61,15 @@ ACCION ejercicio1_parcial ES
 		tot_error:= 0;
 
 		MIENTRAS NFDS(sec) HACER
-			SEGUN v HACER
+			SEGUN v HACER //escribo el caracter del continente en la respectiva sec de salida
 				"A": ESC(sec_a, v);
 				"E": ESC(sec_e, v);
 				"F": ESC(sec_f, v);
 			Fin_segun;
 
-			resg_cont:= v;
+			resg_cont:= v; //resguardo la ventana que tiene el car del continente
 
-			PARA i:= 1 a 30 HACER     //trato el nombre
+			PARA i:= 1 a 30 HACER     //copio el nombre segun el continente
 				SEGUN resg_cont HACER
 					"A": ESC(sec_a, v);
 					"E": ESC(sec_e, v);
@@ -76,25 +77,26 @@ ACCION ejercicio1_parcial ES
 				Fin_segun;
 				AVZ(sec, v);
 			Fin_para;
-			AVZ(sec, v);
+			AVZ(sec, v); //avanzo a el año
 
+			//convierto los caracteres en enteros para después tratar el año
 			num1:= a_entero(v);
 			AVZ(sec, v);
 			num2:= a_entero(v);
 			AVZ(sec, v);			
 			num3:= a_entero(v);
-			AVZ(sec, v);
+			AVZ(sec, v); //me paro el el ultimo caracter del año
 
-			SI (v en VOCAL) ENTONCES
+			SI (v en VOCAL) ENTONCES 
 				tot_error:= tot_error + 1;  //cuento la cantidad que presenta errores
-				num4:= conertir(v)
-			SINO
-				num:= v;
+				num4:= convertir(v) //modifico el car si presenta error
+ 			SINO
+				num4:= a_entero(v); //si no tiene error solo lo copio en num4 la ventana
 			Fin_si;
 
-			num:= numero(num1, num2, num3, num4);
+			num:= numero(num1, num2, num3, num4); //guardo en num el año que inició
 
-			SI (num > 2000) ENTONCES
+			SI (num > 2000) ENTONCES 
 				SEGUN resg_cont HACER
 					"A": tot_a2000:= tot_a2000 + 1;
 					"E": tot_e2000:= tot_e2000 + 1;
@@ -103,17 +105,13 @@ ACCION ejercicio1_parcial ES
 			Fin_si;
 
 			AVZ(sec, v);
-			total_escultor:= total_escultor + 1;
+			total_escultor:= total_escultor + 1; //cuento la cantidad de escultores
 		Fin_mientras;
 
 		Escribir("La cantidad de escultores de América que comenzaron su disciplina después del año 2000 son:", tot_a2000);
-
 		Escribir("La cantidad de escultores de Europa que comenzaron su disciplina después del año 2000 son:", tot_e2000);
-		
 		Escribir("La cantidad de escultores de África que comenzaron su disciplina después del año 2000 son:", tot_f2000);
-		
-		Escribir("El promedio de los escultores que presentaron información errónea fue de:", tot_error/total_escultor);
-
+		Escribir("El promedio de los escultores que presentaron información errónea fue de:", tot_error DIV total_escultor,"%");
 		CERRAR(sec);
 Fin_accion.
 
@@ -150,10 +148,10 @@ ACCION ejercicio2_parcial ES
 		reg_sal: ECL_SALIDA;
 
 		PROCEDIMIENTO corte_material()
-			Escribir("La cantidad de esculturas del material:", resg_materia,"es de:", tot_material);
+			Escribir("La cantidad de esculturas del material:", resg_material,"es de:", tot_material);
 			tot_mes:= tot_mes + tot_material;
 			tot_material:= 0;
-			resg_materia:= reg.material;
+			resg_material:= reg.material;
 		Fin_procedimiento;
 		
 		PROCEDIMIENTO corte_mes()
@@ -185,7 +183,7 @@ ACCION ejercicio2_parcial ES
 
 		resg_año:= reg.año;
 		resg_mes:= reg.mes;
-		resg_material.= reg.material;
+		resg_material:= reg.material;
 
 		MIENTRAS NFDA(Arch) HACER
 			SI (reg.año <> resg_año) ENTONCES 
