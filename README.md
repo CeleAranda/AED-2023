@@ -1,1 +1,1 @@
-¡¡¡¡¡En la carpeta de actualización ME OLVIDÉ DE ABRIR LOS ARCHIVOS MAESTROS DE SALIDA!!!!!
+¡¡¡¡¡En la carpeta de actualización secuencial ME OLVIDÉ DE ABRIR LOS ARCHIVOS MAESTROS DE SALIDA!!!!!
